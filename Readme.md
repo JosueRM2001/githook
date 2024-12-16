@@ -1,4 +1,4 @@
-#GitHook
+## GitHook
 
 This project implements a **pre-commit hook** in Git that checks for the existence of a file called `pageweb.html` before allowing a commit. If the file does not exist, the hook displays an error and stops the commit process.
 
