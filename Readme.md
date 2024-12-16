@@ -1,157 +1,162 @@
-# Proyecto GitHook - Verificador de Archivos
+#GitHook
 
-Este proyecto implementa un **pre-commit hook** en Git que verifica la existencia de un archivo llamado `pageweb.html` antes de permitir un commit. Si el archivo no existe, el hook muestra un error y detiene el proceso de commit.
+This project implements a **pre-commit hook** in Git that checks for the existence of a file called `pageweb.html` before allowing a commit. If the file does not exist, the hook displays an error and stops the commit process.
+
+---
+## Technologies used
+
+- DockerDesktop
+- Visual Studio Code
+- GitHub Actions
+- Docker Hub
+
+## Prerequisites
+**To replicate or use this project, you need:**
+-Install Visual Studio Code
+```bash
+https://code.visualstudio.com/
+```
+- Docker installed on your local machine at the following link:
+```bash
+https://www.docker.com/products/docker-desktop
+```
+- A Docker Hub account to store your images.
+At the following link:
+```bash
+https://hub.docker.com/explore
+```
+- Git installed to manage the repository.
+At the following link:
+```bash
+https://git-scm.com/
+```
 
 ---
 
-## **Requisitos**
-- Git instalado
-- Visual Studio Code (u otro editor de texto)
-- Permisos para ejecutar scripts en tu sistema operativo
+## **1. Creating the Pre-Commit Hook**
+
+### **File Location**
+The The hook file should be placed in the hidden `.git/hooks` directory of your local repository.
+
+### **Steps to create the hook**
+1. Open the terminal in Visual Studio Code (or your preferred editor).
+2. Create the `pre-commit` file inside the `.git/hooks` folder:
+```bash
+touch .git/hooks/pre-commit
+```
+3. Open the `pre-commit` file and paste the following code :
+
+```bash
+#!/bin/bash
+echo "⚙️ Checking for existence of pageweb.html file..."
+
+# Check if the file exists
+if [ ! -f pageweb.html ]; then
+echo "❌ Error: File 'pageweb.html' does not exist. Please add it before committing."
+exit 1 # Stop committing
+else
+echo "✅ File 'pageweb.html' found. Continuing with commit." fi
+```
+
+5. Save the file.
 
 ---
 
-## **1. Creación del Hook Pre-Commit**
+## **2. Test the Hook**
 
-### **Ubicación del archivo**
-El archivo del hook debe colocarse en el directorio oculto `.git/hooks` de tu repositorio local.
+### **Fake the error**
+To test that the hook works correctly:
+1. Temporarily rename the file `pageweb .html`:
+```bash
+mv pageweb.html pageweb_temp.html
+```
+2. Try to commit:
+```bash
+git add .
+git commit -m "Pre-commit hook test"
+```
 
-### **Pasos para crear el hook**
-1. Abre la terminal en Visual Studio Code (o tu editor preferido).
-2. Crea el archivo `pre-commit` dentro de la carpeta `.git/hooks`:
-   ```bash
-   touch .git/hooks/pre-commit
-   ```
-3. Dale permisos de ejecución al hook:
-   ```bash
-   chmod +x .git/hooks/pre-commit
-   ```
-4. Abre el archivo `pre-commit` y pega el siguiente código:
+**Expected result**:
+If the file `pageweb.html` does not exist, you will see the following error and the commit will be stopped:
+```
+❌ Error: The File 'pageweb.html' does not exist. Please add it before committing.
+```
 
-   ```bash
-   #!/bin/bash
-   echo "⚙️ Verificando existencia del archivo pageweb.html..."
+3. Restore the renamed file:
+```bash
+mv pageweb_temp.html pageweb.html
+```
 
-   # Verifica si el archivo existe
-   if [ ! -f pageweb.html ]; then
-       echo "❌ Error: El archivo 'pageweb.html' no existe. Por favor, agrégalo antes de hacer commit."
-       exit 1  # Detiene el commit
-   else
-       echo "✅ Archivo 'pageweb.html' encontrado. Continuando con el commit."
-   fi
-   ```
-
-5. Guarda el archivo.
+4. Try committing again. If the file exists, the hook will allow the commit to proceed without errors.
 
 ---
 
-## **2. Prueba del Hook**
+## **3. Project Structure**
 
-### **Simular el error**
-Para probar que el hook funciona correctamente:
-1. Renombra temporalmente el archivo `pageweb.html`:
-   ```bash
-   mv pageweb.html pageweb_temp.html
-   ```
-2. Intenta hacer un commit:
-   ```bash
-   git add .
-   git commit -m "Prueba del pre-commit hook"
-   ```
+The project has the following files:
+- **pageweb.html**: Simple HTML file that It is verified with the hook.
+- **.git/hooks/pre-commit**: Hook script that validates the existence of the `pageweb.html` file.
 
-   **Resultado esperado**:
-   Si el archivo `pageweb.html` no existe, verás el siguiente error y el commit será detenido:
-   ```
-   ❌ Error: El archivo 'pageweb.html' no existe. Por favor, agrégalo antes de hacer commit.
-   ```
-
-3. Restaura el archivo renombrado:
-   ```bash
-   mv pageweb_temp.html pageweb.html
-   ```
-
-4. Intenta hacer un commit nuevamente. Si el archivo existe, el hook permitirá que el commit continúe sin errores.
-
----
-
-## **3. Estructura del Proyecto**
-
-El proyecto cuenta con los siguientes archivos:
-- **pageweb.html**: Archivo HTML simple que se verifica con el hook.
-- **.git/hooks/pre-commit**: Script del hook que valida la existencia del archivo `pageweb.html`.
-
-### **Ejemplo del archivo `pageweb.html`**
+### **Example of the `pageweb.html` file**
 
 ```html
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHook Example</title>
-    <style>
-        p {
-            color: #7f8c8d;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name=" viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHook Example</title>
+<style>
+p {
+color: #7f8c8d;
+}
+</style>
 </head>
 <body>
-    <h1>¡Bienvenido a GitHook</h1>
-    <p>Este es un ejemplo de archivo HTML para probar el pre-commit.</p>
+< h1>Welcome to GitHook</h1>
+<p>This is an example HTML file for testing pre-commit.</p>
 </body>
 </html>
 ```
 
 ---
 
-## **4. Funcionamiento del Hook**
-1. Cuando intentas hacer un commit con `git commit`, el hook `pre-commit` se ejecuta automáticamente.
-2. El script verifica si el archivo `pageweb.html` existe en la carpeta principal del repositorio.
-3. Si el archivo no existe:
-   - Muestra un mensaje de error.
-   - Detiene el proceso de commit.
-4. Si el archivo existe:
-   - Permite que el commit continúe normalmente.
+## **4 . How the Hook Works**
+1. When you try to commit with `git commit`, the `pre-commit` hook is executed automatically.
+2. The script checks if the file `pageweb.html` exists in the repository's main folder.
+3. If the file does not exist:
+- Displays an error message.
+- Stops the commit process.
+4. If the file exists: - Allows the commit to continue normally.
 
 ---
 
-## **5. Beneficios de Implementar este Hook**
-- **Automatización**: Garantiza que un archivo crítico siempre esté presente antes de confirmar cambios.
-- **Control de errores**: Previene commits incompletos o configuraciones incorrectas.
-- **Facilidad de uso**: Se ejecuta automáticamente sin necesidad de intervención manual.
+## **5. Benefits of Implementing this Hook**
+- **Automation**: Ensures that a critical file is always present before committing changes.
+- **Error handling **: Prevents incomplete commits or incorrect configurations.
+- **Ease of use**: Runs automatically without manual intervention.
 
 ---
 
-## **6. Comandos Útiles**
-- **Crear el hook**:
-   ```bash
-   touch .git/hooks/pre-commit
-   ```
-- **Dar permisos de ejecución**:
-   ```bash
-   chmod +x .git/hooks/pre-commit
-   ```
-- **Renombrar un archivo temporalmente**:
-   ```bash
-   mv pageweb.html pageweb_temp.html
-   ```
-- **Restaurar el archivo**:
-   ```bash
-   mv pageweb_temp.html pageweb.html
-   ```
-- **Realizar un commit**:
-   ```bash
-   git add .
-   git commit -m "Mensaje de commit"
-   ```
-
----
-
-## **7. Notas Finales**
-- Asegúrate de que la carpeta `.git/hooks` exista en tu repositorio.
-- Este hook solo verifica la existencia del archivo `pageweb.html`. Puedes modificar el script para incluir más validaciones.
-- Los hooks de Git son scripts poderosos que permiten automatizar tareas y mantener buenas prácticas en los repositorios.
-
----
-
-**¡Listo! Ahora tu repositorio tiene un pre-commit hook funcional! 🚀**
+## **6. Useful Commands**
+- **Create the hook**:
+```bash
+touch .git/hooks/pre-commit
+```
+- **Give execution permissions**:
+```bash
+chmod +x .git/hooks /pre-commit
+```
+- **Temporarily rename a file**:
+```bash
+mv pageweb.html pageweb_temp.html
+```
+- **Restore the file**:
+```bash
+mv pageweb_temp.html pageweb. html
+```
+- **Make a commit**:
+```bash
+git add .
+git commit -m "Commit message"
+```
